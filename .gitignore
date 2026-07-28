@@ -1,0 +1,11 @@
+backend/data/
+backend/.pytest_cache/
+backend/**/__pycache__/
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+*.zip
+*.log
+*.tsbuildinfo
+.env
+backend/.env

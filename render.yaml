@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: asistent-medical-ai
+    runtime: docker
+    region: frankfurt
+    plan: starter
+    dockerfilePath: ./Dockerfile.render
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: AI_PROVIDER
+        value: gemini
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+      - key: DATABASE_PATH
+        value: /var/data/medical_ai.sqlite3
+      - key: DATA_DIR
+        value: /var/data
+      - key: MAX_UPLOAD_MB
+        value: "10"
+      - key: CORS_ORIGINS
+        value: https://asistent-medical-ai.onrender.com,capacitor://localhost,http://localhost
+    disk:
+      name: medical-data
+      mountPath: /var/data
+      sizeGB: 1

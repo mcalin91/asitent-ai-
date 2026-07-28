@@ -1,0 +1,18 @@
+Document medical fictiv pentru testarea aplicatiei
+
+Pacient: Demo Test
+Data: 2026-07-28
+
+Rezultate laborator:
+- Glicemie: 126 mg/dL
+- HbA1c: 6.1 %
+- LDL: 142 mg/dL
+- HDL: 45 mg/dL
+- Trigliceride: 188 mg/dL
+- Vitamina D: 18 ng/mL
+- TSH: 2.1 mIU/L
+- Creatinina: 0.9 mg/dL
+- Hemoglobina: 14.2 g/dL
+
+Observatii:
+Valorile sunt fictive si trebuie folosite doar pentru testarea fluxului de upload, analiza si recomandari AI.
