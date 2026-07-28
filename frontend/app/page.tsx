@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   Loader2,
   LocateFixed,
+  Menu,
   MapPin,
   MessageCircle,
   Pill,
@@ -25,6 +26,7 @@ import {
   Stethoscope,
   Trash2,
   Upload,
+  X,
 } from "lucide-react";
 
 const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -109,6 +111,7 @@ function Empty({ label }: { label: string }) {
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("Dashboard");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState("");
   const [error, setError] = useState("");
@@ -302,26 +305,34 @@ export default function Home() {
   }
 
   const isBusy = Boolean(saving);
+  const goToScreen = (nextScreen: Screen) => {
+    setScreen(nextScreen);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <main className="shell">
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileMenuOpen ? "mobileOpen" : ""}`}>
         <div className="brand">
           <span className="brandMark">+</span>
           <div>
             <strong>Asistent Medical AI</strong>
             <small>{settings.patient_name || "Pacient demo"}</small>
           </div>
+          <button className="sidebarClose" onClick={() => setMobileMenuOpen(false)} aria-label="Inchide meniul">
+            <X size={20} />
+          </button>
         </div>
         <nav>
           {nav.map(({ label, icon: Icon }) => (
-            <button key={label} className={screen === label ? "active" : ""} onClick={() => setScreen(label)}>
+            <button key={label} className={screen === label ? "active" : ""} onClick={() => goToScreen(label)}>
               <Icon size={18} />
               <span>{label}</span>
             </button>
           ))}
         </nav>
       </aside>
+      {mobileMenuOpen && <button className="menuOverlay" aria-label="Inchide meniul" onClick={() => setMobileMenuOpen(false)} />}
 
       <section className="workspace">
         <header className="topbar">
@@ -330,7 +341,7 @@ export default function Home() {
             <p>{abnormalAnalyses.length ? `${abnormalAnalyses.length} valori necesita atentie.` : "Datele curente sunt pregatite pentru consult."}</p>
           </div>
           <div className="topActions">
-            <button className="ghost" onClick={() => setScreen("Notificari")}>
+            <button className="ghost notificationButton" onClick={() => goToScreen("Notificari")}>
               <Bell size={18} /> {stats.unread_notifications || 0}
             </button>
             <button className="primary" onClick={exportRecord} disabled={isBusy}>
@@ -372,8 +383,8 @@ export default function Home() {
               <div className="heroActions">
                 <button className="primary" onClick={() => documentInput.current?.click()} disabled={isBusy}><FilePlus2 size={18} /> Incarca documente</button>
                 <button onClick={() => analysesInput.current?.click()} disabled={isBusy}><Upload size={18} /> Incarca analize</button>
-                <button onClick={() => setScreen("Medicatie")}><Pill size={18} /> Adauga medicatie</button>
-                <button onClick={() => setScreen("Programari")}><CalendarPlus size={18} /> Programeaza consultatie</button>
+                <button onClick={() => goToScreen("Medicatie")}><Pill size={18} /> Adauga medicatie</button>
+                <button onClick={() => goToScreen("Programari")}><CalendarPlus size={18} /> Programeaza consultatie</button>
               </div>
             </section>
 
@@ -385,17 +396,17 @@ export default function Home() {
             </section>
 
             <section className="panel">
-              <Header title="Analize recente" action="Vezi toate analizele" onClick={() => setScreen("Analize")} />
+              <Header title="Analize recente" action="Vezi toate analizele" onClick={() => goToScreen("Analize")} />
               <List items={dashboard.recent_analyses || []} empty="analyses" render={(item) => <AnalysisRow item={item} />} />
             </section>
 
             <section className="panel">
-              <Header title="Documente recente" action="Documente recente" onClick={() => setScreen("Documente")} />
+              <Header title="Documente recente" action="Documente recente" onClick={() => goToScreen("Documente")} />
               <List items={recentDocuments} empty="documents" render={(item) => <DocumentRow item={item} onDelete={() => deleteDocument(item.id)} onDownload={() => downloadDocument(item.id, item.filename)} onRetry={() => reanalyzeDocument(item.id)} />} />
             </section>
 
             <section className="panel wide">
-              <Header title="Recomandari AI" action="Vezi toate recomandarile" onClick={() => setScreen("Recomandari AI")} />
+              <Header title="Recomandari AI" action="Vezi toate recomandarile" onClick={() => goToScreen("Recomandari AI")} />
               <List items={dashboard.recommendations || []} empty="recommendations" render={(item) => <RecommendationRow item={item} onComplete={() => completeRecommendation(item.id)} />} />
             </section>
           </div>
@@ -666,6 +677,29 @@ export default function Home() {
           <button className="primary" disabled={isBusy || !chatInput.trim()}><MessageCircle size={18} /></button>
         </form>
       </aside>
+
+      <nav className="mobileBottomNav" aria-label="Navigatie principala">
+        <button className={screen === "Dashboard" ? "active" : ""} onClick={() => goToScreen("Dashboard")}>
+          <LayoutDashboard size={21} />
+          <span>Acasa</span>
+        </button>
+        <button className={screen === "Dosar Medical" ? "active" : ""} onClick={() => goToScreen("Dosar Medical")}>
+          <ClipboardList size={21} />
+          <span>Dosar</span>
+        </button>
+        <button className="mobileUpload" onClick={() => documentInput.current?.click()} disabled={isBusy} aria-label="Incarca document">
+          <Upload size={24} />
+          <span>Incarca</span>
+        </button>
+        <button className={screen === "Medici recomandati" ? "active" : ""} onClick={() => goToScreen("Medici recomandati")}>
+          <MapPin size={21} />
+          <span>Medici</span>
+        </button>
+        <button onClick={() => setMobileMenuOpen(true)}>
+          <Menu size={21} />
+          <span>Meniu</span>
+        </button>
+      </nav>
     </main>
   );
 
