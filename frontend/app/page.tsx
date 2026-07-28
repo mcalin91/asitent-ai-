@@ -19,6 +19,7 @@ import {
   MapPin,
   MessageCircle,
   Pill,
+  PhoneCall,
   RotateCw,
   Settings,
   Sparkles,
@@ -335,7 +336,19 @@ export default function Home() {
       {mobileMenuOpen && <button className="menuOverlay" aria-label="Inchide meniul" onClick={() => setMobileMenuOpen(false)} />}
 
       <section className="workspace">
-        <header className="topbar">
+        <div className="mobileAppHeader">
+          <div className="mobileBrandMark">+</div>
+          <div>
+            <strong>Asistent Medical AI</strong>
+            <small>{aiStatus.enabled ? "Asistent AI online" : "Mod local activ"}</small>
+          </div>
+          <button onClick={() => goToScreen("Notificari")} aria-label="Deschide notificarile">
+            <Bell size={20} />
+            {Number(stats.unread_notifications || 0) > 0 && <span>{stats.unread_notifications}</span>}
+          </button>
+        </div>
+
+        <header className={`topbar ${screen === "Dashboard" ? "dashboardTopbar" : ""}`}>
           <div>
             <h1>{screen}</h1>
             <p>{abnormalAnalyses.length ? `${abnormalAnalyses.length} valori necesita atentie.` : "Datele curente sunt pregatite pentru consult."}</p>
@@ -364,6 +377,68 @@ export default function Home() {
 
         {screen === "Dashboard" && (
           <div className="grid">
+            <section className="mobileDashboardIntro">
+              <div>
+                <small>Dosarul tau medical</small>
+                <h2>Cu ce te putem ajuta astazi?</h2>
+                <p>Acceseaza rapid informatiile si serviciile de care ai nevoie.</p>
+              </div>
+              <span className={aiStatus.enabled ? "online" : ""}>
+                <Sparkles size={15} />
+                {aiStatus.enabled ? "AI activ" : "Mod local"}
+              </span>
+            </section>
+
+            <section className="mobileFeatures">
+              <div className="mobileSectionTitle">
+                <div>
+                  <small>Instrumente medicale</small>
+                  <h2>Acces rapid</h2>
+                </div>
+              </div>
+              <div className="mobileFeatureGrid">
+                <button onClick={() => analysesInput.current?.click()} disabled={isBusy}>
+                  <span className="featureIcon orange"><Sparkles size={23} /></span>
+                  <strong>Analiza AI</strong>
+                  <small>Incarca rezultate</small>
+                </button>
+                <button onClick={() => goToScreen("Dosar Medical")}>
+                  <span className="featureIcon blue"><ClipboardList size={23} /></span>
+                  <strong>Dosar medical</strong>
+                  <small>Istoricul tau</small>
+                </button>
+                <button onClick={() => goToScreen("Medici recomandati")}>
+                  <span className="featureIcon green"><MapPin size={23} /></span>
+                  <strong>Medici aproape</strong>
+                  <small>Dupa specialitate</small>
+                </button>
+                <button onClick={() => goToScreen("Programari")}>
+                  <span className="featureIcon plum"><CalendarPlus size={23} /></span>
+                  <strong>Programari</strong>
+                  <small>Consultatiile tale</small>
+                </button>
+                <button onClick={() => goToScreen("Medicatie")}>
+                  <span className="featureIcon amber"><Pill size={23} /></span>
+                  <strong>Medicatie</strong>
+                  <small>Schema curenta</small>
+                </button>
+                <button onClick={() => goToScreen("Monitorizare")}>
+                  <span className="featureIcon rose"><HeartPulse size={23} /></span>
+                  <strong>Monitorizare</strong>
+                  <small>Valori si evolutie</small>
+                </button>
+              </div>
+            </section>
+
+            <a className="mobileEmergency" href="tel:112">
+              <span><PhoneCall size={21} /></span>
+              <div>
+                <strong>Urgenta medicala</strong>
+                <small>Apeleaza imediat serviciul 112</small>
+              </div>
+              <b>112</b>
+            </a>
+
             <section className={`aiStatus ${aiStatus.enabled ? "online" : "offline"}`}>
               <Sparkles size={18} />
               <div>
